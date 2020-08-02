@@ -1,3 +1,6 @@
+#! usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
 
 Libreria : Hexadecimal.py
@@ -7,6 +10,17 @@ Libreria hecha para todos los programadores de Python,
 pero en especial para los debugger's.
 
 """
+
+#Funcion para convertir a string los hexadecimales
+
+def convtStr(string):
+    nuevoStr = ""
+    for i in range(0, len(string), 2):
+        temp = hexToInt(string[i:i+2])
+        nuevoStr += chr(temp)
+
+    return nuevoStr
+
 
 # Funcion usada por IntToHex()
 
@@ -22,110 +36,149 @@ def invPalabras(str, cifras):
 # Funcion que convierte un decimal a sistema hexadecimal
 
 def intToHex(num):
-	num = int(num)
-	simb = ['a','b','c','d','e','f']
-	hexa = ""
+    num = int(num)
+    simb = ['a','b','c','d','e','f']
+    hexa = ""
+    
+    if num < 0:
+        num = -num
+        temp = hexToInt((2 ** 4) * 'f')
+        hexa = intToHex((num ^ temp) + 1)
+        
+        return hexa
+        
 	
-	while(num >= 16):
-		resd=num % 16
-		num //= 16
+    while num >= 16:
+        resd=num % 16
+        num //= 16
+        
+        if resd >= 10:
+            resd = simb[resd-10]
+        hexa += str(resd)
 
-		if(resd >= 10):
-			resd = simb[resd-10]
-		hexa += str(resd)
+    if num != 0:
+        if num > 10:
+            num = simb[num-10]
+        hexa += str(num)
+    
+    hexa = invPalabras(hexa, 1)
 
-	if(num != 0):
-		hexa += str(num)
-
-	hexa = invPalabras(hexa, 1)
-
-	return hexa
+    return hexa
 
 
 # Funcion que convierte un decimal a sistema binario
 
 def intToBin(num):
-	num = int(num)
-	binario = ""
-	
-	while(num >= 2):
-		binario += str(num % 2)
-		num //= 2
+    num = int(num)
+    binario = ""
+    negativo = 0
+    
+    if num < 0:
+        num = -num
+        num = (num ^ binToInt('1' * 32)) + 1
+     
+    while num >= 2:
+        binario += str(num % 2)
+        num //= 2
 
-	if num == 1:
-		binario += '1'
+        if num == 1:
+            binario += '1'
 
-	binario = invPalabras(binario, 1) 
+    binario = invPalabras(binario, 1) 
 
-	return binario
+    return binario
 
 
 # Funcion que convierte un numero binario a sistema decimal
 
 def binToInt(bin):
-	bin = str(bin)
-	tam = len(bin)
-	decimal = 0
-
-	for i in range(0, tam-1):
-		tam -= 1
+    bin = str(bin)
+    tam = len(bin)
+    decimal = 0
+    negativo = 0
+    
+    if len(bin) == 32 and bin[0] == '1':
+        for i in range(0, 32, 4):
+            if '0' in bin[i:i+4]:
+                negativo = 1
+                break
+    
+    for i in range(0, tam):
+        tam -= 1
 		
-		decimal += int(bin[i])*(2**tam)
+        decimal += int(bin[i])*(2**tam)
 
-	return decimal
+    if negativo:
+        decimal = (decimal ^ binToInt('1' * 32)) + 1
+        decimal = int('-' + str(decimal))
+
+    return decimal
 
 
 def binToHex(bin):
-	hex = str(bin)
+    hex = str(bin)
 
-	hex = binToInt(hex)
-	hex = intToHex(hex)
+    hex = binToInt(hex)
+    hex = intToHex(hex)
 
-	return hex
+    return hex
 
 
 #Funcion que convierte un hexadecimal a sistema decimal
 
 def hexToInt(hexa):
-	decimal = 0
-	tam = len(hexa)	
-	hexs = ['a', 'b', 'c', 'd', 'e', 'f']
-	
-	for i in range(0, tam):
-		cifra = hexa[i]
-		tam -= 1
+    decimal = 0
+    tam = len(hexa)	
+    hexs = ['a', 'b', 'c', 'd', 'e', 'f']
+    negativo = 0
 
-		try:
-			verf = hexs.index(cifra)
-		except ValueError:
-			verf = -1
+    if len(hexa) == 16 and hexa[0] == 'f':
+        for i in range(0, 16):
+            if hexa[i] != 'f':
+                negativo = 1
+                break
 
-		if verf >= 0:
-			cifra = 10 + verf
+    
+    for i in range(0, tam):
+        cifra = hexa[i]
+        tam -= 1
 
-		decimal += int(cifra) * (16**tam)
+        try:
+            verf = hexs.index(cifra)
+        except ValueError:
+            verf = -1
 
-	return decimal
+        if verf >= 0:
+            cifra = 10 + verf
+
+        decimal += int(cifra) * (16**tam)
+
+    if negativo:
+        decimal = (decimal ^ hexToInt('f' * 16)) + 1
+        decimal = int('-' + str(decimal))
+
+    return decimal
 
 
 #Funcion que convierte un hexadecimal a sistema binario
 
 def hexToBin(hexa):
-	binario = ""
+    binario = ""
 
-	binario = hexToInt(hexa)
-	binario = intToBin(binario)
+    binario = hexToInt(hexa)
+    binario = intToBin(binario)
 
-	return binario
+    return binario
 
 
 #Comprobacion de las funciones
 
-"""
+
 if __name__ == "__main__":
-	num = input("Introduce un numero binario: ")
-	#print("HEXADECIMAL: {}\nBinario: {}".format(intToHex(num), intToBin(num)))
-	#print("DECIMAL: {}\nHEXADECIMAL: {}".format(binToInt(num), binToHex(num)))
-	#print("DECIMAL: {}\nBinario: {}".format(hexToInt(num), hexToBin(num)))
-	#print("Palabra Invertida: {}\n".format(invPalabras(num, 2)))
-"""
+    num = input("Introduce un numero : ")
+    #print(intToHex(num))
+    #print("HEXADECIMAL: {}\nBINARIO: {}".format(intToHex(num), intToBin(num)))
+    #print("DECIMAL: {}\nHEXADECIMAL: {}".format(binToInt(num), binToHex(num)))
+    print("DECIMAL: {}\nBINARIO: {}".format(hexToInt(num), hexToBin(num)))
+    #print("Palabra Invertida: {}\n".format(invPalabras(num, 2)))
+    input("\nContinuar?? ....")
