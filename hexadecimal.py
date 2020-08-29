@@ -171,6 +171,84 @@ def hexToBin(hexa):
     return binario
 
 
+#Funcion de la operacion XOR, con binarios 
+
+def operXOR(num1, num2):
+    resultado = ""
+    mayor = num1
+    menor = num2
+    
+    if len(num1) != len(num2):
+        if len(num1) > len(num2):
+            mayor = num1
+            menor = num2
+        elif len(num2) > len(num1):
+            mayor = num2
+            menor = num1
+            
+        menor = ('0' * (len(mayor) - len(menor))) + menor
+
+    for i in range(0, len(mayor)):
+        if mayor[i] != menor[i]:
+            resultado += '1'
+        elif mayor[i] == menor[i]:
+            resultado += '0'
+            
+    return resultado
+
+
+#Funcion de la operacion AND, con binarios
+
+def operAND(num1, num2):
+    resultado = ""
+    mayor = num1
+    menor = num2
+    
+    if len(num1) != len(num2):
+        if len(num1) > len(num2):
+            mayor = num1
+            menor = num2
+        elif len(num2) > len(num1):
+            mayor = num2
+            menor = num1
+            
+        menor = ('0' * (len(mayor) - len(menor))) + menor
+        
+    for i in range(0, len(mayor)):
+        if mayor[i] != menor[i]:
+            resultado += '0'
+        elif mayor[i] == menor[i]:
+            resultado += mayor[i]
+           
+    return resultado
+
+
+#Funcion de la operacion OR, con binarios
+
+def operOR(num1, num2):
+    resultado = ""
+    mayor = num1
+    menor = num2
+    
+    if len(num1) != len(num2):
+        if len(num1) > len(num2):
+            mayor = num1
+            menor = num2
+        elif len(num2) > len(num1):
+            mayor = num2
+            menor = num1
+            
+        menor = ('0' * (len(mayor) - len(menor))) + menor
+        
+    for i in range(0, len(mayor)):
+        if mayor[i] != menor[i]:
+            resultado += '1'
+        elif mayor[i] == menor[i]:
+            resultado += mayor[i]
+
+    return resultado
+
+
 #Comprobacion de las funciones
 
 
